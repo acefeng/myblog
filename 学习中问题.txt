@@ -1,0 +1,11 @@
+1.pustags.vue文件中 
+在使用v-for中使用了 data内的数据
+但是再在其他地方使用v-module的时候字体大小又开始变化了
+问题！！！看一看是不是在v-module双向绑定的时候它遍历了所有得data数据
+
+1	javascript		
+2	node		
+3	计算机网络		
+4	html5		
+8	面试		
+=======已解决 http://www.cnblogs.com/acefeng/p/8988356.html

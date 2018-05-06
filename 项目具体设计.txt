@@ -1,0 +1,73 @@
+使用技术
+vue全家桶
+node
+mysql
+浏览器编辑器 http://kindeditor.net/doc.php
+
+
+前端路由及功能设计(项目主体设计部分)
+--/main 用户
+  --/main 首页部分
+  --/main/resume 个人简历
+  --/main/date   归档(数据按照日期进行排序显示)
+  --/main/tags   标签(所有文章存在的标签选项)
+  --/main/search 搜索部分(有些麻烦 等待最后实现)
+  --登录部分login
+--/login  本人登录以后用来上传管理前台显示网页的入口
+  --/user 本文件内部直接包含以下三个
+  --/user/show 所有文章的显示(涉及上传删除修改等选项)
+    --/user/show/simplemde.vue html编辑器区域
+  --/user/tagspus  上传新文章或者修改文章页面(可以按照标签筛选)
+  --/user/pustags 上传新的标签
+
+--------------------------------------------------------------------------
+数据库相应设计：
+关于数据库插入语句
+插入新文章具体内容
+INSERT INTO artical ( id, title, main, font_number, date, good )
+                       VALUES
+                       ( 0, 'title测试5', 'title测试5', 500, '501', 502 );
+
+插入新标签内容            
+INSERT INTO label ( id, name )
+                       VALUES
+                       ( 0, '标签测试5' );
+
+插入文章对应的标签
+INSERT INTO `artical-label` ( artical_id, label_id )
+                       VALUES
+                       (1, 1);
+
+插入对应文章的评论
+INSERT INTO discuss (id, artical_id, main )
+                       VALUES
+                       (0, 1, '这里是评论1');
+===========================
+数据库删除语句
+删除文章
+DELETE FROM artical WHERE id=1
+
+删除文章对应的评论
+DELETE FROM discuss WHERE id=2
+
+删除对应标签名称
+DELETE FROM label WHERE id=2
+===========================
+数据库更改语句
+更改文章
+UPDATE artical SET title='title测试10', main='title测试10', font_number=1000, 
+date='1001', good='1002' WHERE id=5
+
+===========================
+数据库查询语句
+查看所有的数据
+SELECT *
+FROM artical
+
+查看所有按照时间排序的数据
+SELECT * from artical ORDER BY date DESC
+
+
+
+
+
