@@ -8,12 +8,34 @@ var sqlMap = {
 		//show_local: 'select * from local',
 		//show_artical: 'select * from address where id=articalid'
 		
+		//==============以下为用户端============================
+		//获取管理员密码
+		getUser:'SELECT * FROM user WHERE name=?',
+		//设置留言
+		m_setWords:'insert into words(id, main, name, date, email) values (0,?,?,?,?)',
+		//获取所有经过时间排序后的文章
+		m_getDescArticel:'SELECT id,date,title from artical ORDER BY date DESC LIMIT ?,10',
+		//获取特定文章的后一个文章
+		m_getAfterArtical:'select * from artical where id = (select id from artical where id > ? order by id asc limit 1)',
+		//获取特定文章的前一个文章
+		m_getPreArtical:'select * from artical where id = (select id from artical where id < ? order by id desc limit 1);',
+		//获取特定文章
+		m_getIndexArtical:'SELECT * FROM artical WHERE id=?',
+		//获取artical个数
+		m_getcountArtical:'SELECT COUNT(*) FROM artical',
+		//获取所有的文章 并每次提取出5个
+		m_getAllArticel:'SELECT * FROM artical LIMIT ?,5',
+
+
+		//==============以下均为管理员端==========================
+		//删除留言信息
+		delect_word:'DELETE FROM words WHERE id=?',
 		//更改数据库中回复内容
 		set_reply:'UPDATE words SET my_reply=? WHERE id=?',
 		//获取自己的邮箱信息
 		getUseremail:'SELECT * FROM user',
 		//获取所有的words数据
-		getAllWords:'SELECT * FROM words',
+		getAllWords:'SELECT * FROM words ORDER BY date DESC',
 		//获取最后插入数据的id
 		getLastid:'SELECT LAST_INSERT_ID()',
 		//添加文章内容

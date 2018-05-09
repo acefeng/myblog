@@ -1,95 +1,101 @@
 <template>
     <div class="index">
         <div>
-            <article>
+            <article v-for="item in this_articels" :key="item.id">
                 <h3>
-                    <router-link :to='{}'>
-                        设计模式之访问者模式
+                    <router-link :to="{path:'/article',query:{id:item.id}}">
+                        {{item.title}}
                     </router-link>
                 </h3>
                 <p> 
                     <span class="glyphicon glyphicon-save"></span>
-                    <span>2018-09-01 12:32</span>
+                    <span>{{item.date}}</span>
                     <span class="glyphicon glyphicon-list-alt"></span>
-                    <span>21字</span>
+                    <span>{{item.font_number}}字</span>
                 </p>
                 <div>
-                    访问者模式的概念 封装某些作用于某种数据结构中各元素的操作，
-                    它可以在不改变数据结构的前提下定义作用于这些元素的新的操作。 
-                    访问者模式据说是最复杂的一种行为类模式了，所以要慢慢理解。
-                     举个栗子访问者模式的模型图 
-                    这个图也很复杂，里面有五种角色：抽象访问者、具体访问者、抽象元素
-                    、具体元素、结构对象，还 ...
+                    {{item.main | change_main}}
                 </div>
                 <div>
-                    <router-link :to={}>
+                    <router-link :to="{path:'/article',query:{id:item.id}}">
                         阅读全文 »
                     </router-link>
                 </div>
             </article>
-            <article>
-                <h3>
-                    <router-link :to='{}'>
-                        设计模式之访问者模式
+        </div>
+        <div class="paging">
+            <ul>
+                <li v-if="this_index!=1">
+                    <router-link :to="{path:'/',query:{id:(this_index-1)}}">
+                        <span class="glyphicon glyphicon-menu-left"></span>
                     </router-link>
-                </h3>
-                <p> 
-                    <span class="glyphicon glyphicon-save"></span>
-                    <span>2018-09-01 12:32</span>
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                    <span>21字</span>
-                </p>
-                <div>
-                    访问者模式的概念 封装某些作用于某种数据结构中各元素的操作，
-                    它可以在不改变数据结构的前提下定义作用于这些元素的新的操作。 
-                    访问者模式据说是最复杂的一种行为类模式了，所以要慢慢理解。
-                     举个栗子访问者模式的模型图 
-                    这个图也很复杂，里面有五种角色：抽象访问者、具体访问者、抽象元素
-                    、具体元素、结构对象，还 ...
-                </div>
-                <div>
-                    <router-link :to={}>
-                        阅读全文 »
+                </li>
+                <li v-for="(item,index) in pags" :key="index" :class="{this_class:this_index==item}">
+                    <router-link :to="{path:'/',query:{id:item}}" >
+                        <span>{{item}}</span>
                     </router-link>
-                </div>
-            </article>
-            <article>
-                <h3>
-                    <router-link :to='{}'>
-                        设计模式之访问者模式
+                </li>
+                <li v-if="this_index!=pags">
+                    <router-link :to="{path:'/',query:{id:(this_index+1)}}">
+                        <span class="glyphicon glyphicon-menu-right"></span>
                     </router-link>
-                </h3>
-                <p> 
-                    <span class="glyphicon glyphicon-save"></span>
-                    <span>2018-09-01 12:32</span>
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                    <span>21字</span>
-                </p>
-                <div>
-                    访问者模式的概念 封装某些作用于某种数据结构中各元素的操作，
-                    它可以在不改变数据结构的前提下定义作用于这些元素的新的操作。 
-                    访问者模式据说是最复杂的一种行为类模式了，所以要慢慢理解。
-                     举个栗子访问者模式的模型图 
-                    这个图也很复杂，里面有五种角色：抽象访问者、具体访问者、抽象元素
-                    、具体元素、结构对象，还 ...
-                </div>
-                <div>
-                    <router-link :to={}>
-                        阅读全文 »
-                    </router-link>
-                </div>
-            </article>
-      </div>   
+                </li>
+            </ul>
+        </div>   
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: 'HelloWorld',
   data () {
     return {
-    
+        this_articels:{},
+        pags:0,
     }
+  },
+  computed:mapGetters([
+    	'this_index'
+  ]),
+  watch:{
+      $route(to,from){
+            if(to.query.id){
+                this.$store.dispatch('set_this_index',to.query.id);
+            }else{
+                this.$store.dispatch('set_this_index',1);
+            }
+            this.$http.post('api/main/getAllArticel',{params:{pag:this.this_index}})
+            .then((response)=>{
+                this.this_articels=response.data[0];
+                this.pags = Math.ceil(response.data[1][0]['COUNT(*)']/5);
+            }).catch((err)=>{
+                console.log(err);
+            })
+      }
+  },
+  filters: {
+    change_main(value) {
+        if (!value) return ''
+        value = value.toString().replace(/<[^>]+>/g,"");
+        if(value.length>=150){
+            return value.slice(0,150)+' ...';
+        }else{
+            return value;
+        }
+    }
+  },
+  created:function(){
+  },
+  mounted:function(){
+      this.$store.dispatch('set_this_index',1);
+      this.$http.post('api/main/getAllArticel',{params:{pag:this.this_index}})
+      .then((response)=>{
+          this.this_articels=response.data[0];
+          this.pags = Math.ceil(response.data[1][0]['COUNT(*)']/5);
+      }).catch((err)=>{
+          console.log(err);
+      })
   },
   methods:{
   }
@@ -98,6 +104,46 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.glyphicon-menu-left,.glyphicon-menu-right{
+    font-size: 12px;
+}
+.this_class a{
+    background: #ccc;
+    color: #fff!important;
+}
+.paging ul{
+    border-top: 1px solid #eee;
+    padding: 0px;
+}
+.paging ul li:hover a{
+    border-top:1px solid #555;
+}
+.paging ul li a{
+    color:#555;
+    display: block;
+    border-top:1px solid rgba(255,255,255,0);
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.paging ul li{
+    display: inline-block;
+    width: 31px;
+    height: 31px;
+    text-align: center;
+    line-height: 31px;
+    margin: 0px 10px;
+}
+.paging{
+    text-align: left;
+}
+@media (max-width: 767px){
+    .paging{
+        text-align: center;
+    }
+}
 .index>div>article>div>a{
     font-size: 14px;
     color: #555;
@@ -163,8 +209,9 @@ export default {
 }
 .index>div>article{
     box-shadow: 0 0 5px rgba(202,203,203,0.5);
-    width: 100%;
-    padding: 25px;
+    width: 95%;
+    padding: 35px;
+    margin: 0px auto;
     margin-bottom: 60px;
 }
 </style>

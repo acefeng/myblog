@@ -68,6 +68,7 @@ export default {
   border-right:1px solid #f1f1f1;
   height: 100%;
   position: fixed;
+  padding-bottom: 70px;
   top: 70px;
   left: 0px;
   overflow: scroll;

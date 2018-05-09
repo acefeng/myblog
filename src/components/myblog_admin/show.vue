@@ -61,6 +61,7 @@ export default {
 .show_main{
   border-right:1px solid #f1f1f1;
   height: 100%;
+  padding-bottom: 70px;
   position: fixed;
   top: 70px;
   left: 0px;

@@ -16,6 +16,18 @@ conn.connect(function(err){
     }
 })
 
+//删除留言
+router.use('/delect_words',(req,res)=>{
+    const sql = $sql.user.delect_word;
+    conn.query(sql,[req.body.params],function(err,result){
+        if(err){
+            console.log(err);
+        }
+        if(result){
+            res.send('删除成功');
+        }
+    })
+})
 //对于评论的发送邮件处理
 router.use('/relply_email',require('./email.js'));
 //获取所有评论内容
@@ -46,7 +58,7 @@ router.post('/tag_artical',(req,res)=>{
 router.post('/settags',(req,res)=>{
     const sql = $sql.user.insert_tags;
     const font_size = (parseInt(Math.random()*20)+10)+"px";
-    const opacity = Math.random()+0.5;
+    const opacity = Math.random()+0.2;
     conn.query(sql,[req.body.params.tags,font_size,opacity],function(err,result){
         if(err){
             console.log(err);

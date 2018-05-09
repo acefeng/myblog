@@ -1,13 +1,13 @@
 <template>
     <div class="hello">
-        <div class="row">
-            <div class="col-xs-8 col-xs-offset-2">
+        <div :class="{row:true,my_transtion:this_transtion}">
+            <div class="col-xs-10 col-xs-offset-1">
                 <div class="words_text">
                     <h4><span>{{this_name}}</span> 标签</h4>
                     <article v-for="(item,index) in tags_art" :key="index">
                         <h3>
-                            <span>{{item.date}}</span>
-                            <router-link :to="{path:'/user/show/showartical',query:{id:item.id}}">{{item.title}}</router-link>
+                            <span>{{item.date | changedate}}</span>
+                            <router-link :to="{path:'/article',query:{id:item.id}}">{{item.title}}</router-link>
                         </h3>
                     </article>
                 </div>
@@ -22,6 +22,7 @@ export default {
     return {
         tags_art:{},
         this_name:'',
+        this_transtion:true,
     }
   },
   mounted:function(){
@@ -29,16 +30,28 @@ export default {
       this.this_name=this.$route.query.name;
       this.getThetag_artical(tId);
   },
+  beforeRouteUpdate (to, from, next) {
+  // just use `this`
+    this.this_transtion=false;
+    next();
+  },
   watch:{
       $route(to,from){
           this.this_name=this.$route.query.name;
           this.getThetag_artical(to.query.id);
       }
   },
+  filters: {
+    changedate(value) {
+        if (!value) return ''
+        return value.split(' ')[0];
+    }
+  },
   methods:{
       getThetag_artical(id){
-          this.$http.post('/api/user/tag_artical',{params:{tid:id}}).then((response)=>{
+          this.$http.post('/api/main/tag_artical',{params:{tid:id}}).then((response)=>{
               this.tags_art=response.data;
+              this.this_transtion=true;
           }).catch((err)=>{
               console.log(err);
           })
@@ -49,6 +62,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.my_transtion{
+    animation: article_show 1s infinite;
+    animation-iteration-count: 1;
+    animation-fill-mode:forwards;
+    -webkit-animation-fill-mode:forwards;
+}
+@keyframes article_show {
+    from{
+        transform: translateY(-15px);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
 .words_text>article>h3>span{
     color: #555;
     font-size: 12px;
@@ -79,7 +108,7 @@ export default {
     background: #bbb;
     border-radius: 50%;
     position: absolute;
-    top: 7px;
+    top: 10px;
     left: 0px;
 }
 .words_text>article{
@@ -87,7 +116,7 @@ export default {
     width: 100%;
     box-shadow: 0 0 5px rgba(202,203,203,0.5);
     margin-left: 3px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     padding: 20px;
 }
 .words_text{
@@ -98,7 +127,7 @@ export default {
     color: #bbb;
     font-size: 16px;
     margin-left: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 70px;
 }
 .words_text h4 span{
     color: #555;

@@ -6,7 +6,7 @@
         <h6>此时共计{{tags_length}}个标签</h6>
         <div class="tagsshow" id="inshow">
           <div class="a_show" v-for="item in tags_show" :key="item.id">
-            <router-link :to="{path:'/user/pustags/pustagsshow',query:{id:item.id}}" :style="{fontSize:item.font_size,opacity:item.opacity}">{{item.name}}</router-link>
+            <router-link :to="{path:'/user/pustags/pustagsshow',query:{id:item.id,name:item.name}}" :style="{fontSize:item.font_size,opacity:item.opacity}">{{item.name}}</router-link>
             <span @click="getTagname(item)" data-toggle="modal" data-target="#myModal">×</span>
           </div>
         </div>

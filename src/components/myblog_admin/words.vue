@@ -10,7 +10,7 @@
                     <input type="text" placeholder="反馈自我介绍~" v-model="reply_title">
                     <input type="text" placeholder="输入想要给反馈的邮箱~" v-model="reply_email">
                     <div>
-                        <span v-if="reply_name">此时正在回复用户 {{reply_name}}</span>
+                        <span v-if="reply_name">此时正在回复用户 {{reply_name}} <span v-if="!reply_email">该用户没有输入邮箱</span></span>
                         <button @click="send_reply">确认回复~</button>
                     </div>
                 </div>
@@ -26,6 +26,7 @@
                         <div class="show_reply" v-else @click="reply_this(item)" style="color:red;cursor: pointer;">
                             未回复
                         </div>
+                        <i class="words_del" @click="delect_word(item.id)">删除该留言</i>
                     </article>
                 </div>
             </div>
@@ -54,6 +55,18 @@ export default {
       })
   },
   methods:{
+      delect_word(id){
+          this.$http.post('api/user/delect_words',{params:id}).then((response)=>{
+                this.$http.post('api/user/getAllwords').then((response)=>{
+                    this.words=response.data;
+                }).catch((err)=>{
+                    conosle.log(err);
+                })
+                alert(response.data);
+          }).catch((err)=>{
+                console.log(err);
+          })
+      },
       reply_this(item){
           this.reply_name=item.name;
           this.reply_email=item.email;
@@ -81,6 +94,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.words_show article:hover .words_del{
+    bottom: 13px;
+}
+.words_del{
+    position: absolute;
+    bottom: -20px;
+    font-style: normal;
+    right: 3px;
+    color: red;
+    transition: 0.5s;
+    cursor: pointer;
+}
 .show_reply{
     position: absolute;
     right: 0px;
@@ -105,6 +130,7 @@ export default {
     margin-top: 20px;
     padding-bottom: 20px;
     position: relative;
+    overflow: hidden;
 }
 .words_show article span{
     vertical-align: top;
@@ -122,6 +148,9 @@ export default {
     vertical-align: bottom;
     font-size: 12px;
     color: red;
+}
+.user_word>div>span>span{
+    vertical-align: bottom;
 }
 .user_word>div{
     text-align: right;

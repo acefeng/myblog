@@ -204,6 +204,9 @@ export default {
             m='0'+m;
         }  
         let s = nowDate.getSeconds();
+        if(s<10){
+            s='0'+s;
+        }  
 
         return y+'-'+mo+'-'+d+' '+h+':'+m+':'+s;
     },
