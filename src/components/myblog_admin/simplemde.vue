@@ -42,6 +42,8 @@
         :allowImageUpload="true"
         uploadJson='api/user/uploadImg'
         :afterUpload="upload_json"
+        :filterMode="false"
+        :cssData= this.pre_style
         @on-content-change="onContentChange" 
         ></editor>
   </div>
@@ -63,7 +65,21 @@ export default {
         timer:null,
         mode_ushow:'请勿输入重复标签',
         main_si:'',
-        count:0
+        count:0,
+        pre_style:`
+        .pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+        pre.prettyprint {
+            border: 1px solid rgb(204, 204, 204);  
+            background-color:#F8F8F8;  
+            margin-left: 2em;  
+            padding: 0.5em;  
+            font-size: 110%;  
+            display: block;  
+            font-family: "Consolas", "Monaco", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;  
+            margin: 1em 0px;  
+            white-space: pre-wrap;  
+        }
+        `
     }
   }, 
   computed:mapGetters([

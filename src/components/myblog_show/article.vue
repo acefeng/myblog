@@ -78,11 +78,14 @@ export default {
         }
         this.tags=response.data[3];
         this.this_transtion=true;
+        
       }).catch((err)=>{
         console.log(err);
       })
+      
     }
   },
+
   beforeRouteUpdate (to, from, next) {
   // just use `this`
     this.this_transtion=false;
@@ -230,4 +233,5 @@ export default {
     margin-bottom: 30px;
     
 }
+
 </style>

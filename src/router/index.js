@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Axios from 'axios'
 
 // 模板引入
 //管理员端
@@ -52,6 +53,13 @@ const router=new Router({
       component: User,
       children: [
         { 
+          path: '/', 
+          component: Show,
+          children:[
+            {path:'showartical',component:Show_artical}
+          ]
+        },
+        { 
           path: 'show', 
           component: Show,
           children:[
@@ -76,7 +84,7 @@ const router=new Router({
       ],
       meta: { 
         requireAuth: true
-      },
+      }
     },
     {
       path:'/',
@@ -121,7 +129,20 @@ const router=new Router({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(res => res.meta.requireAuth)) {// 判断是否需要登录权限
     if (sessionStorage.getItem('user_name')) {// 判断是否登录
-      next();
+      Axios.post('api/main/getUser_name').then((response)=>{
+        if(response.data){
+          next();
+        }else{
+          sessionStorage.removeItem('user_name');
+          next({
+            path: '/',
+          })
+          alert('登录异常，请重新登录');
+          window.location.reload(); 
+        }
+      }).catch((err)=>{
+        console.log(err);
+      })
     } else {// 没登录则跳转到登录界面
       next({
         path: '/',

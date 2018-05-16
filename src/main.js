@@ -13,7 +13,7 @@ import './assets/css/animate.css'
 
 //html编辑器文件
 import VueKindEditor from 'vue-kindeditor'
-import 'kindeditor/kindeditor-all-min.js'
+import 'kindeditor/kindeditor-all.js'
 import 'kindeditor/themes/default/default.css'
 
 //vuex改变共享数据

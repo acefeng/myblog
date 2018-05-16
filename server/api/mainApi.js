@@ -23,6 +23,14 @@ router.post('/login_out',(req,res)=>{
     req.session.password = "";
     res.end('{"success":"登出成功"}');
 })
+//检测是否有登陆权限
+router.post('/getUser_name',(req,res)=>{
+    if(req.session.user_name){
+        res.end('true');
+    }else{
+        res.end('false');
+    }
+})
 //登录接口
 router.post('/login',(req,res)=>{
     const sql = $sql.user.getUser;
@@ -40,7 +48,7 @@ router.post('/login',(req,res)=>{
             }else{
                 req.session.user_name = user_name;
                 req.session.user_password = user_password;
-                res.end(`{"success":"登陆成功","user_name":"${user_name}"}`);
+                res.end(`{"success":"登陆成功","user_name":"1"}`);
             }
         }
     })
@@ -181,6 +189,7 @@ router.post('/getAllArticel',(req,res)=>{
             })
         }
     })
+    // console.log(req.session);
 })
 
 module.exports = router;

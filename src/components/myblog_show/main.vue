@@ -151,18 +151,18 @@ export default {
     },
     login(){
         this.$http.post('api/main/login',{params:{user_name:this.myuser_name,user_password:this.user_password}})
-        .then((response)=>{
-            const result = response.data;
-            if(result.err){
-                alert(result.err);
-            }else if(result.success){
-                this.$store.dispatch('set_user_name',result.user_name);
-                alert(result.success);
-            }
-            // console.log(response.data.err);
-        }).catch((err)=>{
-            console.log(err);
-        })
+                .then((response)=>{
+                    const result = response.data;
+                    if(result.err){
+                        alert(result.err);
+                    }else if(result.success){
+                        this.$store.dispatch('set_user_name',result.user_name);
+                        alert(result.success);
+                    }
+                    // console.log(response.data.err);
+                }).catch((err)=>{
+                    console.log(err);
+                })
     }
   }
 }

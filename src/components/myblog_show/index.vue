@@ -61,6 +61,8 @@ export default {
   watch:{
       $route(to,from){
             if(to.query.id){
+                console.log(to.query.id);
+                console.log(from.query.id);
                 this.$store.dispatch('set_this_index',to.query.id);
             }else{
                 this.$store.dispatch('set_this_index',1);
@@ -77,7 +79,7 @@ export default {
   filters: {
     change_main(value) {
         if (!value) return ''
-        value = value.toString().replace(/<[^>]+>/g,"");
+        value = value.toString().replace(/<[^>]+>|&nbsp;|emsp/g,"");
         if(value.length>=150){
             return value.slice(0,150)+' ...';
         }else{
@@ -88,7 +90,11 @@ export default {
   created:function(){
   },
   mounted:function(){
-      this.$store.dispatch('set_this_index',1);
+      if(this.$route.query.id){
+        this.$store.dispatch('set_this_index',this.$route.query.id)    
+      }else{
+        this.$store.dispatch('set_this_index',1);
+      }
       this.$http.post('api/main/getAllArticel',{params:{pag:this.this_index}})
       .then((response)=>{
           this.this_articels=response.data[0];

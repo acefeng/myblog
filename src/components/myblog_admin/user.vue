@@ -57,6 +57,10 @@ export default {
       rub:false,
     }
   },
+  mounted:function(){
+
+    // this.$http.post('api/main/getUser_name').then()
+  },
   methods:{
     user_addnav(){
       this.rub=true;
