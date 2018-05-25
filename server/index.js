@@ -25,24 +25,65 @@ function demo(){
     return result;
 }
 var session=require('express-session');
+var RedisStore = require('connect-redis')(session);
 app.use(session({
+    store: new RedisStore({host:'127.0.0.1',port:'6379'}),
     secret:demo(),               //设置 session 签名
     name:'my_blog',
     cookie:{maxAge:60*1000*60*24}, // 储存的时间 24小时
     resave:false,             // 每次请求都重新设置session
     saveUninitialized:true
 }));
-// (function(){
-// 	var keys = [];
-// 	for(var i=0;i<100000;i++){
-// 		keys[i] = 'a_' +Math.random();
-// 	}
-// 	app.use(cookieSession({
-// 		name:'sess_id',
-// 		keys:keys,
-// 		maxAge:2*60*1000 //20min
-// 	}))
-// })()
+var redis   = require('redis');
+var client  = redis.createClient('6379', '127.0.0.1');
+app.use(function (req, res, next) {
+    if (!req.session) {
+      return next(new Error('oh no')) // handle error
+    }
+    // console.log(req.sessionID.length);
+    // console.log(req.headers.cookie);
+    if(req.headers.cookie){
+        var session_id=req.headers.cookie.replace(/^my_blog=s\%3A|\..*$/g,'');
+        if(session_id!=req.sessionID){
+            client.get(`sess:${session_id}`,function(err,result){  
+                if(err){  
+                    console.log(err);  
+                }
+                if(result){
+                    client.set(`sess:${req.sessionID}`,result,function(err,resu){  
+                        if(err){  
+                            console.log(err);  
+                        }else{  
+                            client.ttl(`sess:${session_id}`,(err,data)=>{
+                                if(err){
+                                    console.log(err)
+                                }
+                                if(data){
+                                    client.expire(`sess:${req.sessionID}`, data, (err, isSuccess) => {
+                                        if (err) {
+                                            //your code
+                                            console.log(err);
+                                        } else {
+                                            //your another code
+                                            console.log('更改时间成功');
+                                        }
+                                    });
+                                }
+                            })
+                            if(JSON.parse(result).user_name){
+                                req.session.user_name=JSON.parse(result).user_name;
+                                req.session.user_password=JSON.parse(result).user_password;
+                            }
+                            console.log('cookie-session数据重新设置成功')
+                        }  
+                    }); 
+                }  
+            }); 
+        }
+        
+    }
+    next() // otherwise continue
+})
 
 app.use(express.static('public'));
 //后端api路由

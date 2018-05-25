@@ -6,7 +6,13 @@ const formidable = require('formidable');
 const crypto = require('crypto');
 
 const router = express.Router();
-
+//操作redis引用
+var redis   = require('redis');
+var client  = redis.createClient('6379', '127.0.0.1');
+//reids检验链接报错
+client.on("error", function(error) {
+    console.log(error);
+});
 var conn = mysql.createConnection(models.mysql);
 //初始链接数据库
 conn.connect(function(err){
@@ -25,10 +31,31 @@ router.post('/login_out',(req,res)=>{
 })
 //检测是否有登陆权限
 router.post('/getUser_name',(req,res)=>{
-    if(req.session.user_name){
-        res.end('true');
-    }else{
-        res.end('false');
+    if(req.headers.cookie){
+        var session_id=req.headers.cookie.replace(/^my_blog=s\%3A|\..*$/g,'');
+        client.get(`sess:${session_id}`,function(err,result){  
+            if(err){  
+                console.log(err);  
+            }else{
+                client.set(`sess:${req.sessionID}`,result,function(err,resu){  
+                    if(err){  
+                        console.log(err);  
+                    }else{  
+                        // req.session = JSON.parse(result);
+                        if(JSON.parse(result).user_name){
+                            req.session.user_name=JSON.parse(result).user_name;
+                            req.session.user_password=JSON.parse(result).user_password;
+                        }
+                        if(req.session.user_name){
+                            res.end('true');
+                        }else{
+                            res.end('false');
+                        }
+                        console.log('cookie-session数据重新设置成功')
+                    }  
+                }); 
+            }  
+        }); 
     }
 })
 //登录接口
@@ -189,7 +216,7 @@ router.post('/getAllArticel',(req,res)=>{
             })
         }
     })
-    // console.log(req.session);
+    
 })
 
 module.exports = router;
